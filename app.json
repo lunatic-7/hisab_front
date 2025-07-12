@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "hisab_front",
+    "name": "Hisab",
     "slug": "hisab_front",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,10 +20,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.lunatic07.hisab_front"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "79bda254-c423-44c7-8c7a-2337a6e19ece"
+      }
     }
   }
 }
