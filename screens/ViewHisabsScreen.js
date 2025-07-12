@@ -254,60 +254,68 @@ export default function ViewHisabsScreen({ route, navigation }) {
             delay={index * 80}
             useNativeDriver
         >
-            <Card style={styles.card}>
-                <Card.Content style={styles.cardContent}>
-                    {/* Top Row - Item and Price */}
-                    <View style={styles.topRow}>
-                        <View style={styles.titleContainer}>
-                            <Icon
-                                name={item.if_online ? "web" : "cash"}
-                                size={18}
-                                color={item.if_online ? "#3B82F6" : "#10B981"}
-                                style={styles.icon}
+
+            <TouchableOpacity onPress={() => navigation.navigate('AddHisab', {
+                hisab: item,
+                personId: item.person,
+                personName,
+                mode: 'edit'
+            })}>
+                <Card style={styles.card}>
+                    <Card.Content style={styles.cardContent}>
+                        {/* Top Row - Item and Price */}
+                        <View style={styles.topRow}>
+                            <View style={styles.titleContainer}>
+                                <Icon
+                                    name={item.if_online ? "web" : "cash"}
+                                    size={18}
+                                    color={item.if_online ? "#3B82F6" : "#10B981"}
+                                    style={styles.icon}
+                                />
+                                <Text style={styles.itemName} numberOfLines={1}>
+                                    {item.item}
+                                </Text>
+                            </View>
+                            <Text style={styles.itemPrice}>
+                                ₹{parseFloat(item.price).toFixed(2)}
+                            </Text>
+                        </View>
+
+                        {/* Description */}
+                        {item.description && (
+                            <Text style={styles.description} numberOfLines={2}>
+                                {item.description}
+                            </Text>
+                        )}
+
+                        {/* Bottom Row - Meta Info and Actions */}
+                        <View style={styles.bottomRow}>
+                            <View style={styles.metaContainer}>
+                                <Icon name="calendar" size={12} color="#64748B" />
+                                <Text style={styles.metaText}>
+                                    {format(parseISO(item.date), 'dd MMM')}
+                                </Text>
+                                {item.if_online && (
+                                    <>
+                                        <View style={styles.dotSeparator} />
+                                        <Icon name="web" size={12} color="#64748B" />
+                                        <Text style={styles.metaText}>
+                                            {item.platform}
+                                        </Text>
+                                    </>
+                                )}
+                            </View>
+                            <IconButton
+                                icon="trash-can-outline"
+                                iconColor="#64748B"
+                                size={16}
+                                onPress={() => deleteHisab(item.id)}
+                                style={styles.deleteButton}
                             />
-                            <Text style={styles.itemName} numberOfLines={1}>
-                                {item.item}
-                            </Text>
                         </View>
-                        <Text style={styles.itemPrice}>
-                            ₹{parseFloat(item.price).toFixed(2)}
-                        </Text>
-                    </View>
-
-                    {/* Description */}
-                    {item.description && (
-                        <Text style={styles.description} numberOfLines={2}>
-                            {item.description}
-                        </Text>
-                    )}
-
-                    {/* Bottom Row - Meta Info and Actions */}
-                    <View style={styles.bottomRow}>
-                        <View style={styles.metaContainer}>
-                            <Icon name="calendar" size={12} color="#64748B" />
-                            <Text style={styles.metaText}>
-                                {format(parseISO(item.date), 'dd MMM')}
-                            </Text>
-                            {item.if_online && (
-                                <>
-                                    <View style={styles.dotSeparator} />
-                                    <Icon name="web" size={12} color="#64748B" />
-                                    <Text style={styles.metaText}>
-                                        {item.platform}
-                                    </Text>
-                                </>
-                            )}
-                        </View>
-                        <IconButton
-                            icon="trash-can-outline"
-                            iconColor="#64748B"
-                            size={16}
-                            onPress={() => deleteHisab(item.id)}
-                            style={styles.deleteButton}
-                        />
-                    </View>
-                </Card.Content>
-            </Card>
+                    </Card.Content>
+                </Card>
+            </TouchableOpacity>
         </Animatable.View>
     );
 

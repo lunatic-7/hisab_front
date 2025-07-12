@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, Platform, TouchableOpacity, Alert } from 'react-native';
 import { TextInput, Button, Switch, Text, Card, Divider, ActivityIndicator } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import { api } from '../utils/api';
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { format } from 'date-fns';
-
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Platform, TouchableOpacity } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
 export default function AddHisabScreen({ route, navigation }) {
   const preselectedPersonId = route.params?.personId;
   const personName = route.params?.personName;
+
+  const editingMode = route.params?.mode === 'edit';
+  const editingHisab = route.params?.hisab;
 
   const [persons, setPersons] = useState([]);
   const [hisab, setHisab] = useState({
@@ -30,7 +31,6 @@ export default function AddHisabScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [fetchingPersons, setFetchingPersons] = useState(true);
   const [showDatePicker, setShowDatePicker] = useState(false);
-
 
   useEffect(() => {
     const fetchPersons = async () => {
@@ -53,6 +53,15 @@ export default function AddHisabScreen({ route, navigation }) {
     fetchPersons();
   }, [preselectedPersonId]);
 
+  useEffect(() => {
+    if (editingMode && editingHisab) {
+      setHisab({
+        ...editingHisab,
+        date: editingHisab.date,
+      });
+    }
+  }, []);
+
   const submit = async () => {
     if (!hisab.item || !hisab.price || !hisab.person) {
       Alert.alert('⚠️ Missing Info', 'Please fill in all required fields');
@@ -61,11 +70,15 @@ export default function AddHisabScreen({ route, navigation }) {
 
     try {
       setLoading(true);
-      await api.post('/hisabs/', hisab);
+      if (editingMode) {
+        await api.put(`/hisabs/${editingHisab.id}/`, hisab);
+      } else {
+        await api.post('/hisabs/', hisab);
+      }
       navigation.goBack();
     } catch (error) {
-      console.error('Failed to add hisab:', error);
-      Alert.alert('❌ Error', 'Failed to add hisab. Please try again.');
+      console.error('Failed to save hisab:', error);
+      Alert.alert('❌ Error', 'Failed to save transaction. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -73,17 +86,12 @@ export default function AddHisabScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Animatable.View
-        animation="fadeInUp"
-        duration={600}
-        useNativeDriver
-        style={styles.animatedView}
-      >
+      <Animatable.View animation="fadeInUp" duration={600} useNativeDriver style={styles.animatedView}>
         <Card style={styles.card}>
           <Card.Title
-            title={`Add Transaction ${personName ? `for ${personName}` : ''}`}
+            title={`${editingMode ? 'Edit' : 'Add'} Transaction ${personName ? `for ${personName}` : ''}`}
             titleStyle={styles.cardTitle}
-            left={(props) => <Icon {...props} name="plus-circle" size={24} color="#6C63FF" />}
+            left={(props) => <Icon {...props} name={editingMode ? "pencil" : "plus-circle"} size={24} color="#6C63FF" />}
           />
 
           <Card.Content>
@@ -107,12 +115,7 @@ export default function AddHisabScreen({ route, navigation }) {
                         dropdownIconColor="#6C63FF"
                       >
                         {persons.map((p) => (
-                          <Picker.Item
-                            key={p.id}
-                            label={p.name}
-                            value={p.id}
-                            color="white"
-                          />
+                          <Picker.Item key={p.id} label={p.name} value={p.id} color="white" />
                         ))}
                       </Picker>
                     </View>
@@ -158,13 +161,13 @@ export default function AddHisabScreen({ route, navigation }) {
                   </View>
                   <Switch
                     value={hisab.if_online}
-                    onValueChange={(val) => {
+                    onValueChange={(val) =>
                       setHisab((prev) => ({
                         ...prev,
                         if_online: val,
                         platform: val ? 'zomato' : '',
-                      }));
-                    }}
+                      }))
+                    }
                     color="#6C63FF"
                   />
                 </View>
@@ -195,8 +198,7 @@ export default function AddHisabScreen({ route, navigation }) {
 
                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                   <Text style={styles.dateText}>
-                    <Icon name="calendar" size={16} color="#AAA" />{' '}
-                    Date: {format(new Date(hisab.date), 'dd MMM yyyy')}
+                    <Icon name="calendar" size={16} color="#AAA" /> Date: {format(new Date(hisab.date), 'dd MMM yyyy')}
                   </Text>
                 </TouchableOpacity>
 
@@ -211,10 +213,9 @@ export default function AddHisabScreen({ route, navigation }) {
                         setHisab({ ...hisab, date: selectedDate.toISOString().split('T')[0] });
                       }
                     }}
-                    maximumDate={new Date()} // Restrict to today or past
+                    maximumDate={new Date()}
                   />
                 )}
-
               </>
             )}
           </Card.Content>
@@ -229,9 +230,15 @@ export default function AddHisabScreen({ route, navigation }) {
               loading={loading}
               style={styles.submitButton}
               labelStyle={styles.buttonLabel}
-              icon="check-circle"
+              icon={editingMode ? 'pencil' : 'check-circle'}
             >
-              {loading ? 'Adding...' : 'Add Transaction'}
+              {loading
+                ? editingMode
+                  ? 'Updating...'
+                  : 'Adding...'
+                : editingMode
+                  ? 'Update Transaction'
+                  : 'Add Transaction'}
             </Button>
           </Card.Actions>
         </Card>

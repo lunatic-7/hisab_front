@@ -134,18 +134,21 @@ export default function App() {
             <Stack.Screen
               name="AddHisab"
               component={AddHisabScreen}
-              options={{
-                title: '➕ Add New Hisab',
+              options={({ route }) => ({
+                title: route.params?.mode === 'edit'
+                  ? '✏️ Edit Hisab'
+                  : '➕ Add New Hisab',
                 headerRight: () => (
                   <Icon
-                    name="wallet-plus"
+                    name={route.params?.mode === 'edit' ? 'wallet-edit' : 'wallet-plus'}
                     size={24}
                     color={theme.colors.accent}
                     style={{ marginRight: 15 }}
                   />
                 ),
-              }}
+              })}
             />
+
           </Stack.Navigator>
         </SafeAreaView>
       </NavigationContainer>
