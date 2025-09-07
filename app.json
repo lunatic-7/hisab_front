@@ -2,7 +2,7 @@
   "expo": {
     "name": "Hisab",
     "slug": "hisab_front",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -30,6 +30,9 @@
       "eas": {
         "projectId": "79bda254-c423-44c7-8c7a-2337a6e19ece"
       }
-    }
+    },
+    "plugins": [
+      "expo-web-browser"
+    ]
   }
 }

@@ -91,11 +91,11 @@ export default function App() {
       }}
     >
       <NavigationContainer theme={theme}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background, paddingTop: 50 }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background}}>
           <Stack.Navigator
             initialRouteName="PersonHisabs"
             screenOptions={{
-              headerShown: false,
+              headerShown: true,
               cardStyle: { backgroundColor: theme.colors.background },
               padding: 10,
               ...screenOptions,
@@ -105,30 +105,22 @@ export default function App() {
               name="PersonHisabs"
               component={PersonHisabScreen}
               options={{
-                title: '💰 Hisab Manager',
-                headerRight: () => (
-                  <Icon
-                    name="finance"
-                    size={24}
-                    color={theme.colors.accent}
-                    style={{ marginRight: 15 }}
-                  />
-                ),
+                title: '💰 Hisabs',
+                // headerRight: () => (
+                //   <Icon
+                //     name="finance"
+                //     size={24}
+                //     color={theme.colors.accent}
+                //     style={{ marginRight: 15 }}
+                //   />
+                // ),
               }}
             />
             <Stack.Screen
               name="ViewHisabs"
               component={ViewHisabsScreen}
               options={({ route }) => ({
-                title: `${route.params?.personName || 'User'}'s Hisabs 📊`,
-                headerRight: () => (
-                  <Icon
-                    name="account-circle"
-                    size={24}
-                    color={theme.colors.accent}
-                    style={{ marginRight: 15 }}
-                  />
-                ),
+                title: `${route.params?.personName || 'User'} ka hisab`,
               })}
             />
             <Stack.Screen
@@ -136,16 +128,8 @@ export default function App() {
               component={AddHisabScreen}
               options={({ route }) => ({
                 title: route.params?.mode === 'edit'
-                  ? '✏️ Edit Hisab'
-                  : '➕ Add New Hisab',
-                headerRight: () => (
-                  <Icon
-                    name={route.params?.mode === 'edit' ? 'wallet-edit' : 'wallet-plus'}
-                    size={24}
-                    color={theme.colors.accent}
-                    style={{ marginRight: 15 }}
-                  />
-                ),
+                  ? 'Edit Hisab'
+                  : 'Nya Hisab',
               })}
             />
 

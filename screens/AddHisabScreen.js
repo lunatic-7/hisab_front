@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, Platform, TouchableOpacity, Alert } from 'react-native';
-import { TextInput, Button, Switch, Text, Card, Divider, ActivityIndicator } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker';
+import { View, StyleSheet, Alert } from 'react-native';
+import { Card, Divider, FAB } from 'react-native-paper';
 import { api } from '../utils/api';
 import * as Animatable from 'react-native-animatable';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { format } from 'date-fns';
-import DateTimePicker from '@react-native-community/datetimepicker';
-
-const { width } = Dimensions.get('window');
+import PersonPicker from '../components/PersonPicker';
+import ItemInput from '../components/ItemInput';
+import PriceInput from '../components/PriceInput';
+import DescriptionInput from '../components/DescriptionInput';
+import OnlinePurchaseSwitch from '../components/OnlinePurchaseSwitch';
+import PlatformPicker from '../components/PlatformPicker';
+import DatePicker from '../components/DatePicker';
+import SubmitButton from '../components/SubmitButton';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function AddHisabScreen({ route, navigation }) {
   const preselectedPersonId = route.params?.personId;
   const personName = route.params?.personName;
-
   const editingMode = route.params?.mode === 'edit';
   const editingHisab = route.params?.hisab;
 
@@ -27,10 +29,8 @@ export default function AddHisabScreen({ route, navigation }) {
     platform: '',
     date: new Date().toISOString().split('T')[0],
   });
-
   const [loading, setLoading] = useState(false);
   const [fetchingPersons, setFetchingPersons] = useState(true);
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
     const fetchPersons = async () => {
@@ -60,7 +60,7 @@ export default function AddHisabScreen({ route, navigation }) {
         date: editingHisab.date,
       });
     }
-  }, []);
+  }, [editingMode, editingHisab]);
 
   const submit = async () => {
     if (!hisab.item || !hisab.price || !hisab.person) {
@@ -75,6 +75,12 @@ export default function AddHisabScreen({ route, navigation }) {
       } else {
         await api.post('/hisabs/', hisab);
       }
+
+      // Call the onGoBack callback if provided
+      if (route.params?.onGoBack) {
+        route.params.onGoBack();
+      }
+
       navigation.goBack();
     } catch (error) {
       console.error('Failed to save hisab:', error);
@@ -84,138 +90,77 @@ export default function AddHisabScreen({ route, navigation }) {
     }
   };
 
+  const updateHisab = (field, value) => {
+    setHisab(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
     <View style={styles.container}>
       <Animatable.View animation="fadeInUp" duration={600} useNativeDriver style={styles.animatedView}>
         <Card style={styles.card}>
+          <FAB
+            icon={editingMode ? "pencil" : "plus-circle"}
+            style={styles.titleFab}
+            color="white"
+            size="small"
+            customSize={40}
+            theme={{ colors: { accent: '#6C63FF' } }}
+            onPress={() => { }} // Empty handler since it's just decorative
+          />
           <Card.Title
-            title={`${editingMode ? 'Edit' : 'Add'} Transaction ${personName ? `for ${personName}` : ''}`}
+            title={`${editingMode ? 'Edit' : 'Add'} hisab ${personName ? `for ${personName}` : ''}`}
             titleStyle={styles.cardTitle}
-            left={(props) => <Icon {...props} name={editingMode ? "pencil" : "plus-circle"} size={24} color="#6C63FF" />}
           />
 
           <Card.Content>
             {fetchingPersons && !preselectedPersonId ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator animating={true} color="#6C63FF" />
-                <Text style={styles.loadingText}>Loading persons...</Text>
-              </View>
+              <LoadingSpinner text="Loading persons..." />
             ) : (
               <>
                 {!preselectedPersonId && (
-                  <>
-                    <Text style={styles.label}>
-                      <Icon name="account" size={16} color="#AAA" /> Person *
-                    </Text>
-                    <View style={styles.pickerContainer}>
-                      <Picker
-                        selectedValue={hisab.person}
-                        onValueChange={(value) => setHisab({ ...hisab, person: value })}
-                        style={styles.picker}
-                        dropdownIconColor="#6C63FF"
-                      >
-                        {persons.map((p) => (
-                          <Picker.Item key={p.id} label={p.name} value={p.id} color="white" />
-                        ))}
-                      </Picker>
-                    </View>
-                  </>
+                  <PersonPicker
+                    persons={persons}
+                    selectedValue={hisab.person}
+                    onValueChange={(value) => updateHisab('person', value)}
+                  />
                 )}
 
-                <TextInput
-                  label="Item *"
+                <ItemInput
                   value={hisab.item}
-                  mode="outlined"
-                  onChangeText={(val) => setHisab({ ...hisab, item: val })}
-                  style={styles.input}
-                  theme={styles.inputTheme}
-                  left={<TextInput.Icon icon="shopping" color="#6C63FF" />}
+                  onChangeText={(value) => updateHisab('item', value)}
                 />
 
-                <TextInput
-                  label="Price *"
+                <PriceInput
                   value={hisab.price}
-                  mode="outlined"
-                  keyboardType="numeric"
-                  onChangeText={(val) => setHisab({ ...hisab, price: val })}
-                  style={styles.input}
-                  theme={styles.inputTheme}
-                  left={<TextInput.Icon icon="currency-inr" color="#6C63FF" />}
+                  onChangeText={(value) => updateHisab('price', value)}
                 />
 
-                <TextInput
-                  label="Description"
+                <DescriptionInput
                   value={hisab.description}
-                  mode="outlined"
-                  onChangeText={(val) => setHisab({ ...hisab, description: val })}
-                  style={styles.input}
-                  theme={styles.inputTheme}
-                  left={<TextInput.Icon icon="text" color="#6C63FF" />}
-                  multiline
+                  onChangeText={(value) => updateHisab('description', value)}
                 />
 
-                <View style={styles.switchRow}>
-                  <View style={styles.switchLabel}>
-                    <Icon name="web" size={20} color="#AAA" />
-                    <Text style={styles.switchText}> Online Purchase?</Text>
-                  </View>
-                  <Switch
-                    value={hisab.if_online}
-                    onValueChange={(val) =>
-                      setHisab((prev) => ({
-                        ...prev,
-                        if_online: val,
-                        platform: val ? 'zomato' : '',
-                      }))
+                <OnlinePurchaseSwitch
+                  value={hisab.if_online}
+                  onValueChange={(value) => {
+                    updateHisab('if_online', value);
+                    if (value) {
+                      updateHisab('platform', 'zomato');
                     }
-                    color="#6C63FF"
-                  />
-                </View>
+                  }}
+                />
 
                 {hisab.if_online && (
-                  <>
-                    <Text style={styles.label}>
-                      <Icon name="web" size={16} color="#AAA" /> Platform
-                    </Text>
-                    <View style={styles.pickerContainer}>
-                      <Picker
-                        selectedValue={hisab.platform || 'zomato'}
-                        onValueChange={(value) => setHisab({ ...hisab, platform: value })}
-                        style={styles.picker}
-                        dropdownIconColor="#6C63FF"
-                      >
-                        <Picker.Item label="Zomato" value="zomato" color="white" />
-                        <Picker.Item label="Swiggy" value="swiggy" color="white" />
-                        <Picker.Item label="Amazon" value="amazon" color="white" />
-                        <Picker.Item label="Flipkart" value="flipkart" color="white" />
-                        <Picker.Item label="Blinkit" value="blinkit" color="white" />
-                        <Picker.Item label="Zepto" value="zepto" color="white" />
-                        <Picker.Item label="Others" value="others" color="white" />
-                      </Picker>
-                    </View>
-                  </>
-                )}
-
-                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                  <Text style={styles.dateText}>
-                    <Icon name="calendar" size={16} color="#AAA" /> Date: {format(new Date(hisab.date), 'dd MMM yyyy')}
-                  </Text>
-                </TouchableOpacity>
-
-                {showDatePicker && (
-                  <DateTimePicker
-                    value={new Date(hisab.date)}
-                    mode="date"
-                    display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                    onChange={(event, selectedDate) => {
-                      setShowDatePicker(false);
-                      if (selectedDate) {
-                        setHisab({ ...hisab, date: selectedDate.toISOString().split('T')[0] });
-                      }
-                    }}
-                    maximumDate={new Date()}
+                  <PlatformPicker
+                    selectedValue={hisab.platform}
+                    onValueChange={(value) => updateHisab('platform', value)}
                   />
                 )}
+
+                <DatePicker
+                  date={hisab.date}
+                  onDateChange={(date) => updateHisab('date', date)}
+                />
               </>
             )}
           </Card.Content>
@@ -223,23 +168,12 @@ export default function AddHisabScreen({ route, navigation }) {
           <Divider style={styles.divider} />
 
           <Card.Actions style={styles.actions}>
-            <Button
-              mode="contained"
-              onPress={submit}
-              disabled={loading || fetchingPersons}
+            <SubmitButton
               loading={loading}
-              style={styles.submitButton}
-              labelStyle={styles.buttonLabel}
-              icon={editingMode ? 'pencil' : 'check-circle'}
-            >
-              {loading
-                ? editingMode
-                  ? 'Updating...'
-                  : 'Adding...'
-                : editingMode
-                  ? 'Update Transaction'
-                  : 'Add Transaction'}
-            </Button>
+              disabled={loading || fetchingPersons}
+              editingMode={editingMode}
+              onPress={submit}
+            />
           </Card.Actions>
         </Card>
       </Animatable.View>
@@ -268,50 +202,15 @@ const styles = StyleSheet.create({
   cardTitle: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 20,
+    marginTop: 30,
+    marginLeft: 50,
+    marginBottom: 10,
   },
-  input: {
-    marginVertical: 8,
-    backgroundColor: '#1E1E1E',
-  },
-  inputTheme: {
-    colors: {
-      text: 'white',
-      placeholder: '#AAA',
-      primary: '#6C63FF',
-      background: 'transparent',
-      surface: '#1E1E1E',
-    },
-  },
-  switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 16,
-    paddingHorizontal: 8,
-  },
-  switchLabel: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  switchText: {
-    color: '#AAA',
-  },
-  label: {
-    color: '#AAA',
-    marginTop: 8,
-    marginBottom: 4,
-    fontSize: 14,
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#333',
-    borderRadius: 8,
-    marginBottom: 16,
-    overflow: 'hidden',
-  },
-  picker: {
-    color: 'white',
-    backgroundColor: '#1E1E1E',
+  titleFab: {
+    position: 'absolute',
+    top: 19,
+    left: 16,
   },
   divider: {
     backgroundColor: '#333',
@@ -320,31 +219,5 @@ const styles = StyleSheet.create({
   actions: {
     justifyContent: 'center',
     padding: 16,
-  },
-  submitButton: {
-    width: '100%',
-    backgroundColor: '#6C63FF',
-    borderRadius: 8,
-    paddingVertical: 6,
-  },
-  buttonLabel: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  dateText: {
-    color: '#AAA',
-    fontSize: 14,
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  loadingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  loadingText: {
-    color: '#AAA',
-    marginTop: 16,
   },
 });
