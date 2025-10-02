@@ -89,35 +89,42 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
     return (
         <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
             <Card style={styles.modalCard}>
-                <Card.Content>
-                    <Text style={styles.modalTitle}>Export Transactions as PDF</Text>
+                <Card.Content style={styles.cardContent}>
+                    <View style={styles.header}>
+                        <View style={styles.iconBadge}>
+                            <Icon name="file-pdf-box" size={24} color="#FFFFFF" />
+                        </View>
+                        <Text style={styles.modalTitle}>Export as PDF</Text>
+                    </View>
                     <Divider style={styles.modalDivider} />
 
                     <Text style={styles.modalSubtitle}>Select Date Range</Text>
 
                     <View style={styles.datePickerContainer}>
-                        <Text style={styles.datePickerLabel}>From:</Text>
+                        <Text style={styles.datePickerLabel}>From</Text>
                         <TouchableOpacity
                             style={styles.dateInput}
                             onPress={() => setShowStartDatePicker(true)}
+                            activeOpacity={0.7}
                         >
                             <Text style={styles.dateInputText}>
                                 {format(startDate, 'dd MMM yyyy')}
                             </Text>
-                            <Icon name="calendar" size={18} color="#6C63FF" />
+                            <Icon name="calendar" size={18} color="#FFFFFF" />
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.datePickerContainer}>
-                        <Text style={styles.datePickerLabel}>To:</Text>
+                        <Text style={styles.datePickerLabel}>To</Text>
                         <TouchableOpacity
                             style={styles.dateInput}
                             onPress={() => setShowEndDatePicker(true)}
+                            activeOpacity={0.7}
                         >
                             <Text style={styles.dateInputText}>
                                 {format(endDate, 'dd MMM yyyy')}
                             </Text>
-                            <Icon name="calendar" size={18} color="#6C63FF" />
+                            <Icon name="calendar" size={18} color="#FFFFFF" />
                         </TouchableOpacity>
                     </View>
 
@@ -148,6 +155,7 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
                         onPress={onDismiss}
                         style={styles.cancelButton}
                         labelStyle={styles.cancelButtonLabel}
+                        textColor="#AAAAAA"
                     >
                         Cancel
                     </Button>
@@ -155,8 +163,11 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
                         mode="contained"
                         onPress={generatePDF}
                         style={styles.generateButton}
+                        labelStyle={styles.generateButtonLabel}
                         loading={pdfLoading}
                         disabled={pdfLoading}
+                        buttonColor="#FFFFFF"
+                        textColor="#000000"
                     >
                         {pdfLoading ? 'Generating...' : 'Generate PDF'}
                     </Button>
@@ -167,27 +178,101 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
 }
 
 const styles = StyleSheet.create({
-    modalContainer: { padding: 20 },
-    modalCard: { backgroundColor: '#1E1E1E', borderRadius: 12 },
-    modalTitle: { color: 'white', fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
-    modalDivider: { backgroundColor: '#333', marginBottom: 16 },
-    modalSubtitle: { color: '#AAA', fontSize: 16, marginBottom: 16 },
-    datePickerContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-    datePickerLabel: { color: '#CCC', width: 50, fontSize: 16 },
+    modalContainer: {
+        padding: 20,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalCard: {
+        backgroundColor: '#1A1A1A',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#2A2A2A',
+    },
+    cardContent: {
+        paddingVertical: 20,
+        paddingHorizontal: 20,
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    iconBadge: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        backgroundColor: '#2A2A2A',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 16,
+    },
+    modalTitle: {
+        color: '#FFFFFF',
+        fontSize: 20,
+        fontWeight: '600',
+        letterSpacing: 0.3,
+    },
+    modalDivider: {
+        backgroundColor: '#2A2A2A',
+        marginBottom: 20,
+        height: 1,
+    },
+    modalSubtitle: {
+        color: '#AAAAAA',
+        fontSize: 15,
+        marginBottom: 20,
+        fontWeight: '500',
+    },
+    datePickerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    datePickerLabel: {
+        color: '#AAAAAA',
+        width: 60,
+        fontSize: 15,
+        fontWeight: '500',
+    },
     dateInput: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#2A2A2A',
-        borderRadius: 8,
-        padding: 12,
+        backgroundColor: '#000000',
+        borderRadius: 12,
+        padding: 14,
         borderWidth: 1,
-        borderColor: '#444',
+        borderColor: '#2A2A2A',
     },
-    dateInputText: { color: 'white', fontSize: 16 },
-    modalActions: { justifyContent: 'space-between', padding: 12 },
-    cancelButton: { borderColor: '#555', borderWidth: 1 },
-    cancelButtonLabel: { color: '#AAA' },
-    generateButton: { backgroundColor: '#6C63FF' },
+    dateInputText: {
+        color: '#FFFFFF',
+        fontSize: 15,
+        fontWeight: '500',
+        letterSpacing: 0.2,
+    },
+    modalActions: {
+        justifyContent: 'space-between',
+        padding: 16,
+        paddingTop: 8,
+    },
+    cancelButton: {
+        borderColor: '#2A2A2A',
+        borderWidth: 1,
+        borderRadius: 12,
+        paddingHorizontal: 8,
+    },
+    cancelButtonLabel: {
+        color: '#AAAAAA',
+        fontWeight: '600',
+        letterSpacing: 0.3,
+    },
+    generateButton: {
+        borderRadius: 12,
+        paddingHorizontal: 8,
+    },
+    generateButtonLabel: {
+        fontWeight: '600',
+        letterSpacing: 0.3,
+    },
 });

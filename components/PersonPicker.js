@@ -7,15 +7,18 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 export default function PersonPicker({ persons, selectedValue, onValueChange }) {
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>
-                <Icon name="account" size={16} color="#AAA" /> Person *
-            </Text>
+            <View style={styles.labelContainer}>
+                <View style={styles.iconBadge}>
+                    <Icon name="account" size={16} color="#FFFFFF" />
+                </View>
+                <Text style={styles.label}>Person *</Text>
+            </View>
             <View style={styles.pickerContainer}>
                 <Picker
                     selectedValue={selectedValue}
                     onValueChange={onValueChange}
                     style={styles.picker}
-                    dropdownIconColor="#6C63FF"
+                    dropdownIconColor="#FFFFFF"
                 >
                     {persons.map((p) => (
                         <Picker.Item key={p.id} label={p.name} value={p.id} color="white" />
@@ -30,19 +33,36 @@ const styles = StyleSheet.create({
     container: {
         marginBottom: 16,
     },
+    labelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    iconBadge: {
+        width: 28,
+        height: 28,
+        borderRadius: 8,
+        backgroundColor: '#2A2A2A',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 10,
+    },
     label: {
-        color: '#AAA',
-        marginBottom: 4,
-        fontSize: 14,
+        color: '#FFFFFF',
+        fontSize: 15,
+        fontWeight: '500',
+        letterSpacing: 0.2,
     },
     pickerContainer: {
         borderWidth: 1,
-        borderColor: '#333',
-        borderRadius: 8,
+        borderColor: '#2A2A2A',
+        borderRadius: 12,
         overflow: 'hidden',
+        backgroundColor: '#1A1A1A',
     },
     picker: {
-        color: 'white',
-        backgroundColor: '#1E1E1E',
+        color: '#FFFFFF',
+        backgroundColor: '#1A1A1A',
+        height: 50,
     },
 });

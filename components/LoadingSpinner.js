@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 
 export default function LoadingSpinner({ text = "Loading..." }) {
+    const theme = useTheme();
+
     return (
-        <View style={styles.container}>
-            <ActivityIndicator animating={true} color="#6C63FF" size="large" />
-            <Text style={styles.text}>{text}</Text>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+            <ActivityIndicator animating={true} color={theme.colors.primary} size="large" />
+            <Text style={[styles.text, { color: theme.colors.onSurfaceVariant }]}>{text}</Text>
         </View>
     );
 }
@@ -18,8 +20,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     text: {
-        color: '#AAA',
-        marginTop: 16,
-        fontSize: 16,
+        marginTop: 20,
+        fontSize: 15,
+        fontWeight: '500',
+        letterSpacing: 0.3,
     },
 });

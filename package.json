@@ -1,6 +1,6 @@
 {
   "name": "hisab_front",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
   "scripts": {
     "start": "expo start",
@@ -26,6 +26,7 @@
     "react-native-animatable": "^1.4.0",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.24.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-paper": "^5.14.3",
     "react-native-reanimated": "~3.17.4",

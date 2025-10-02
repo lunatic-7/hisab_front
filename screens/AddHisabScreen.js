@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { Card, Divider, FAB } from 'react-native-paper';
+import { Card, Divider, FAB, useTheme } from 'react-native-paper';
 import { api } from '../utils/api';
 import * as Animatable from 'react-native-animatable';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import PersonPicker from '../components/PersonPicker';
 import ItemInput from '../components/ItemInput';
 import PriceInput from '../components/PriceInput';
@@ -14,6 +16,7 @@ import SubmitButton from '../components/SubmitButton';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function AddHisabScreen({ route, navigation }) {
+  const theme = useTheme();
   const preselectedPersonId = route.params?.personId;
   const personName = route.params?.personName;
   const editingMode = route.params?.mode === 'edit';
@@ -76,10 +79,7 @@ export default function AddHisabScreen({ route, navigation }) {
         await api.post('/hisabs/', hisab);
       }
 
-      // Call the onGoBack callback if provided
-      if (route.params?.onGoBack) {
-        route.params.onGoBack();
-      }
+      if (route.params?.onGoBack) route.params.onGoBack();
 
       navigation.goBack();
     } catch (error) {
@@ -95,21 +95,27 @@ export default function AddHisabScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Animatable.View animation="fadeInUp" duration={600} useNativeDriver style={styles.animatedView}>
-        <Card style={styles.card}>
+    <KeyboardAwareScrollView
+      style={{ backgroundColor: theme.colors.background }}
+      contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+      enableOnAndroid
+      keyboardShouldPersistTaps="handled"
+      extraScrollHeight={100}
+    >
+      <Animatable.View animation="fadeInUp" duration={600} useNativeDriver>
+        <Card style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
           <FAB
             icon={editingMode ? "pencil" : "plus-circle"}
-            style={styles.titleFab}
-            color="white"
+            style={[styles.titleFab, { backgroundColor: theme.colors.primary }]}
+            color={theme.colors.background}
             size="small"
             customSize={40}
-            theme={{ colors: { accent: '#6C63FF' } }}
-            onPress={() => { }} // Empty handler since it's just decorative
+            onPress={() => { }}
           />
+
           <Card.Title
             title={`${editingMode ? 'Edit' : 'Add'} hisab ${personName ? `for ${personName}` : ''}`}
-            titleStyle={styles.cardTitle}
+            titleStyle={[styles.cardTitle, { color: theme.colors.text }]}
           />
 
           <Card.Content>
@@ -144,9 +150,7 @@ export default function AddHisabScreen({ route, navigation }) {
                   value={hisab.if_online}
                   onValueChange={(value) => {
                     updateHisab('if_online', value);
-                    if (value) {
-                      updateHisab('platform', 'zomato');
-                    }
+                    if (value) updateHisab('platform', 'zomato');
                   }}
                 />
 
@@ -165,9 +169,9 @@ export default function AddHisabScreen({ route, navigation }) {
             )}
           </Card.Content>
 
-          <Divider style={styles.divider} />
+          <Divider style={{ backgroundColor: theme.colors.outline, marginVertical: 8 }} />
 
-          <Card.Actions style={styles.actions}>
+          <Card.Actions style={{ justifyContent: 'center', padding: 16 }}>
             <SubmitButton
               loading={loading}
               disabled={loading || fetchingPersons}
@@ -177,32 +181,20 @@ export default function AddHisabScreen({ route, navigation }) {
           </Card.Actions>
         </Card>
       </Animatable.View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#121212',
-  },
-  animatedView: {
-    flex: 1,
-  },
   card: {
     borderRadius: 16,
-    backgroundColor: '#1E1E1E',
-    elevation: 3,
-    shadowColor: '#6C63FF',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    elevation: 0,
+    borderWidth: 1,
   },
   cardTitle: {
-    color: 'white',
-    fontWeight: 'bold',
+    fontWeight: '600',
     fontSize: 20,
+    letterSpacing: 0.2,
     marginTop: 30,
     marginLeft: 50,
     marginBottom: 10,
@@ -211,13 +203,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 19,
     left: 16,
-  },
-  divider: {
-    backgroundColor: '#333',
-    marginVertical: 8,
-  },
-  actions: {
-    justifyContent: 'center',
-    padding: 16,
   },
 });

@@ -1,16 +1,27 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
 
 export default function SubmitButton({ loading, disabled, editingMode, onPress }) {
+    const theme = useTheme(); // ✅ access theme colors
+
     return (
         <Button
             mode="contained"
             onPress={onPress}
             disabled={disabled}
             loading={loading}
-            style={styles.submitButton}
-            labelStyle={styles.buttonLabel}
+            style={[
+                styles.submitButton,
+                {
+                    backgroundColor: disabled ? theme.colors.outline : theme.colors.background,
+                },
+            ]}
+            labelStyle={[
+                styles.buttonLabel,
+                { color: disabled ? theme.colors.onSurfaceVariant : theme.colors.background },
+            ]}
+            contentStyle={styles.buttonContent}
             icon={editingMode ? 'pencil' : 'check-circle'}
         >
             {loading
@@ -27,13 +38,16 @@ export default function SubmitButton({ loading, disabled, editingMode, onPress }
 const styles = StyleSheet.create({
     submitButton: {
         width: '100%',
-        backgroundColor: '#6C63FF',
-        borderRadius: 8,
-        paddingVertical: 6,
+        borderRadius: 12,
+        elevation: 0,
+        shadowOpacity: 0,
+    },
+    buttonContent: {
+        paddingVertical: 8,
     },
     buttonLabel: {
-        color: 'white',
-        fontWeight: 'bold',
+        fontWeight: '600',
         fontSize: 16,
+        letterSpacing: 0.3,
     },
 });

@@ -1,41 +1,66 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Dialog, Text, TextInput, Button } from 'react-native-paper';
+import { Dialog, TextInput, Button, useTheme } from 'react-native-paper';
 
-export default function AddPersonDialog({ visible, onDismiss, newPerson, setNewPerson, onAddPerson }) {
+export default function AddPersonDialog({
+    visible,
+    onDismiss,
+    newPerson,
+    setNewPerson,
+    onAddPerson,
+}) {
+    const theme = useTheme();
+
     return (
         <Dialog
             visible={visible}
             onDismiss={onDismiss}
-            style={styles.dialog}
+            style={[styles.dialog, {
+                backgroundColor: theme.colors.surface,
+                borderWidth: 1,
+                borderColor: theme.colors.outline,
+            }]}
         >
             <View style={styles.dialogContent}>
-                <Dialog.Title style={styles.dialogTitle}>➕ Add New Person</Dialog.Title>
+                <Dialog.Title style={[styles.dialogTitle, { color: theme.colors.text }]}>
+                    Add New Person
+                </Dialog.Title>
                 <Dialog.Content>
                     <TextInput
                         label="Person's Name"
                         value={newPerson}
                         onChangeText={setNewPerson}
                         mode="outlined"
-                        outlineColor="#6C63FF"
-                        activeOutlineColor="#6C63FF"
-                        style={styles.input}
-                        theme={{ colors: { text: 'white', placeholder: '#AAA' } }}
-                        left={<TextInput.Icon icon="account" color="#6C63FF" />}
+                        outlineColor={theme.colors.outline}
+                        activeOutlineColor={theme.colors.primary}
+                        style={[styles.input, { backgroundColor: theme.colors.background }]}
+                        textColor={theme.colors.text}
+                        theme={{
+                            colors: {
+                                text: theme.colors.text,
+                                placeholder: theme.colors.placeholder,
+                                onSurfaceVariant: theme.colors.placeholder,
+                            },
+                        }}
+                        left={<TextInput.Icon icon="account" color={theme.colors.onSurfaceVariant} />}
                         autoFocus
                     />
                 </Dialog.Content>
-                <Dialog.Actions>
+                <Dialog.Actions style={styles.actions}>
                     <Button
                         onPress={onDismiss}
-                        textColor="#AAA"
+                        textColor={theme.colors.onSurfaceVariant}
+                        style={styles.cancelButton}
                     >
                         Cancel
                     </Button>
                     <Button
                         onPress={onAddPerson}
-                        textColor="#6C63FF"
-                        labelStyle={{ fontWeight: 'bold' }}
+                        mode="contained"
+                        buttonColor={theme.colors.primary}
+                        textColor="#000000"
+                        labelStyle={styles.addButtonLabel}
+                        style={styles.addButton}
                     >
                         Add Person
                     </Button>
@@ -48,18 +73,33 @@ export default function AddPersonDialog({ visible, onDismiss, newPerson, setNewP
 const styles = StyleSheet.create({
     dialog: {
         borderRadius: 16,
-        backgroundColor: '#1E1E1E',
+        marginHorizontal: 20,
     },
     dialogContent: {
-        backgroundColor: '#1E1E1E',
-        padding: 8,
+        paddingHorizontal: 4,
+        paddingVertical: 8,
     },
     dialogTitle: {
-        color: 'white',
-        fontWeight: 'bold',
+        fontWeight: '600',
+        fontSize: 20,
     },
     input: {
-        backgroundColor: '#1E1E1E',
         marginTop: 8,
+    },
+    actions: {
+        paddingHorizontal: 16,
+        paddingBottom: 16,
+        gap: 8,
+    },
+    cancelButton: {
+        borderRadius: 8,
+    },
+    addButton: {
+        borderRadius: 8,
+        elevation: 0,
+    },
+    addButtonLabel: {
+        fontWeight: '600',
+        letterSpacing: 0.5,
     },
 });

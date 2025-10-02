@@ -1,29 +1,43 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { FAB } from 'react-native-paper';
+import { FAB, useTheme } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 
 export default function AddFAB({ icon = "plus", onPress }) {
+    const theme = useTheme();
+
     return (
-        <Animatable.View animation="pulse" easing="ease-out" iterationCount="infinite" duration={2000}>
+        <Animatable.View
+            animation="fadeIn"
+            duration={300}
+            style={styles.container}
+        >
             <FAB
                 icon={icon}
-                style={styles.fab}
+                style={[styles.fab, { 
+                    backgroundColor: theme.colors.primary,
+                    borderWidth: 0,
+                }]}
                 onPress={onPress}
-                color="white"
-                animated
-                customSize={60}
-                theme={{ colors: { accent: '#6C63FF' } }}
+                color="#000000"
+                customSize={56}
+                rippleColor="rgba(0, 0, 0, 0.1)"
             />
         </Animatable.View>
     );
 }
 
 const styles = StyleSheet.create({
-    fab: {
+    container: {
         position: 'absolute',
-        right: 24,
-        bottom: 24,
-        backgroundColor: '#6C63FF',
+        right: 20,
+        bottom: 20,
+    },
+    fab: {
+        elevation: 4,
+        shadowColor: '#FFFFFF',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
     },
 });

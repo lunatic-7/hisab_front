@@ -29,7 +29,7 @@ export default function ViewHisabsScreen({ route, navigation }) {
             const res = await api.get(`/persons/${personId}/hisabs/`);
             const sortedHisabs = res.data.sort((a, b) => new Date(b.date) - new Date(a.date));
             setHisabs(sortedHisabs);
-            
+
             setTotalAmount(sortedHisabs.reduce((sum, hisab) => sum + parseFloat(hisab.price || 0), 0));
         } catch (error) {
             console.error("Failed to fetch hisabs:", error);
@@ -52,7 +52,7 @@ export default function ViewHisabsScreen({ route, navigation }) {
                     const hisabDate = parseISO(hisab.date);
                     return hisabDate >= selectedMonth.startDate && hisabDate <= selectedMonth.endDate;
                 })
-                .sort((a, b) => b.id - a.id);
+                .sort((a, b) => b.date - a.date);
 
             setFilteredHisabs(monthHisabs);
 
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#121212',
+        backgroundColor: '#000000', // Pure black background
     },
     emptyList: {
         flex: 1,

@@ -15,15 +15,17 @@ export default function PersonCard({ person, index, onPress, onDelete }) {
             <Card style={styles.card} onPress={onPress}>
                 <Card.Content style={styles.cardContent}>
                     <View style={styles.personInfo}>
-                        <Icon name="account-circle" size={28} color="#6C63FF" />
+                        <View style={styles.iconContainer}>
+                            <Icon name="account-circle" size={24} color="#FFFFFF" />
+                        </View>
                         <Text variant="titleMedium" style={styles.personName}>
                             {person.name}
                         </Text>
                     </View>
                     <IconButton
-                        icon="delete"
-                        iconColor="#FF6584"
-                        size={24}
+                        icon="trash-can-outline"
+                        iconColor="#666666"
+                        size={20}
                         onPress={(e) => {
                             e.stopPropagation();
                             onDelete();
@@ -38,30 +40,41 @@ export default function PersonCard({ person, index, onPress, onDelete }) {
 
 const styles = StyleSheet.create({
     card: {
-        marginVertical: 8,
-        borderRadius: 12,
-        backgroundColor: '#1E1E1E',
-        elevation: 3,
-        shadowColor: '#6C63FF',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
+        marginVertical: 6,
+        marginHorizontal: 16,
+        borderRadius: 16,
+        backgroundColor: '#1A1A1A',
+        elevation: 0,
+        borderWidth: 1,
+        borderColor: '#2A2A2A',
     },
     cardContent: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 16,
     },
     personInfo: {
         flexDirection: 'row',
         alignItems: 'center',
+        flex: 1,
+    },
+    iconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        backgroundColor: '#2A2A2A',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     personName: {
-        color: 'white',
-        marginLeft: 12,
-        fontSize: 16,
-        fontWeight: '500',
+        color: '#FFFFFF',
+        marginLeft: 16,
+        fontSize: 17,
+        fontWeight: '600',
+        letterSpacing: 0.3,
+        flex: 1,
     },
     deleteButton: {
         margin: 0,
