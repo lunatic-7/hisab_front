@@ -12,7 +12,7 @@ export default function OnlinePurchaseSwitch({ value, onValueChange }) {
                 <View style={[styles.iconContainer, { backgroundColor: theme.colors.surfaceVariant }]}>
                     <Icon name="web" size={18} color={theme.colors.text} />
                 </View>
-                <Text style={[styles.switchText, { color: theme.colors.text }]}>Online Purchase?</Text>
+                <Text style={[styles.switchText, { color: theme.colors.text }]}>Online?</Text>
             </View>
             <Switch
                 value={value}

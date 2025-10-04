@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Alert } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
 import { api } from '../utils/api';
 import { parseISO, format, startOfMonth, endOfMonth } from 'date-fns';
-import SummaryCard from '../components/SummaryCard';
-import MonthCard from '../components/MonthCard';
-import HisabCard from '../components/HisabCard';
-import PDFExportModal from '../components/PDFExportModal';
-import AddFAB from '../components/AddFAB';
-import BackButton from '../components/BackButton';
-import EmptyState from '../components/EmptyState';
-import LoadingSpinner from '../components/LoadingSpinner';
+import SummaryCard from '../components/cards/SummaryCard';
+import MonthCard from '../components/cards/MonthCard';
+import HisabCard from '../components/cards/HisabCard';
+import PDFExportModal from '../components/extras/PDFExportModal';
+import AddFAB from '../components/extras/AddFAB';
+import BackButton from '../components/buttons/BackButton';
+import EmptyState from '../components/extras/EmptyState';
+import LoadingSpinner from '../components/extras/LoadingSpinner';
 
 export default function ViewHisabsScreen({ route, navigation }) {
     const { personId, personName } = route.params;

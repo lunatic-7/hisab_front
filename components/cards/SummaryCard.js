@@ -22,7 +22,7 @@ export default function SummaryCard({ personName, totalAmount, onPDFPress, subti
                         </Text>
                         <IconButton
                             icon="file-pdf-box"
-                            iconColor={theme.colors.primary}
+                            iconColor={theme.colors.error}
                             size={24}
                             onPress={onPDFPress}
                             style={styles.pdfButton}

@@ -32,7 +32,7 @@ export default function HisabCard({ hisab, index, onPress, onDelete }) {
                                     <Icon
                                         name={hisab.if_online ? "web" : "cash"}
                                         size={14}
-                                        color={theme.colors.primary}
+                                        color={hisab.if_online ? theme.colors.warning : theme.colors.success}
                                     />
                                 </View>
                                 <Text style={[styles.itemName, { color: theme.colors.text }]} numberOfLines={1}>
@@ -68,7 +68,7 @@ export default function HisabCard({ hisab, index, onPress, onDelete }) {
                             </View>
                             <IconButton
                                 icon="trash-can-outline"
-                                iconColor={theme.colors.placeholder}
+                                iconColor={theme.colors.error}
                                 size={16}
                                 onPress={onDelete}
                                 style={styles.deleteButton}

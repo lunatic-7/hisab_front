@@ -5,15 +5,15 @@ import { api } from '../utils/api';
 import * as Animatable from 'react-native-animatable';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import PersonPicker from '../components/PersonPicker';
-import ItemInput from '../components/ItemInput';
-import PriceInput from '../components/PriceInput';
-import DescriptionInput from '../components/DescriptionInput';
-import OnlinePurchaseSwitch from '../components/OnlinePurchaseSwitch';
-import PlatformPicker from '../components/PlatformPicker';
-import DatePicker from '../components/DatePicker';
-import SubmitButton from '../components/SubmitButton';
-import LoadingSpinner from '../components/LoadingSpinner';
+import PersonPicker from '../components/pickers/PersonPicker';
+import ItemInput from '../components/inputs/ItemInput';
+import PriceInput from '../components/inputs/PriceInput';
+import DescriptionInput from '../components/inputs/DescriptionInput';
+import OnlinePurchaseSwitch from '../components/extras/OnlinePurchaseSwitch';
+import PlatformPicker from '../components/pickers/PlatformPicker';
+import DatePicker from '../components/pickers/DatePicker';
+import SubmitButton from '../components/buttons/SubmitButton';
+import LoadingSpinner from '../components/extras/LoadingSpinner';
 
 export default function AddHisabScreen({ route, navigation }) {
   const theme = useTheme();
@@ -146,20 +146,26 @@ export default function AddHisabScreen({ route, navigation }) {
                   onChangeText={(value) => updateHisab('description', value)}
                 />
 
-                <OnlinePurchaseSwitch
-                  value={hisab.if_online}
-                  onValueChange={(value) => {
-                    updateHisab('if_online', value);
-                    if (value) updateHisab('platform', 'zomato');
-                  }}
-                />
+                <View style={styles.horizontalContainer}>
+                  <View style={styles.switchContainer}>
+                    <OnlinePurchaseSwitch
+                      value={hisab.if_online}
+                      onValueChange={(value) => {
+                        updateHisab('if_online', value);
+                        if (value) updateHisab('platform', 'zomato');
+                      }}
+                    />
+                  </View>
 
-                {hisab.if_online && (
-                  <PlatformPicker
-                    selectedValue={hisab.platform}
-                    onValueChange={(value) => updateHisab('platform', value)}
-                  />
-                )}
+                  <View style={styles.pickerContainer}>
+                    {hisab.if_online && (
+                      <PlatformPicker
+                        selectedValue={hisab.platform}
+                        onValueChange={(value) => updateHisab('platform', value)}
+                      />
+                    )}
+                  </View>
+                </View>
 
                 <DatePicker
                   date={hisab.date}
@@ -203,5 +209,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 19,
     left: 16,
+  },
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  switchContainer: {
+    flex: 1.2,
+  },
+  pickerContainer: {
+    flex: 0.8,
+    marginTop: 12,
   },
 });

@@ -76,8 +76,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
     },
     dialogContent: {
-        paddingHorizontal: 4,
-        paddingVertical: 8,
+        paddingHorizontal: 4
     },
     dialogTitle: {
         fontWeight: '600',
@@ -97,6 +96,8 @@ const styles = StyleSheet.create({
     addButton: {
         borderRadius: 8,
         elevation: 0,
+        borderWidth: 1,
+        borderColor: '#333333',
     },
     addButtonLabel: {
         fontWeight: '600',

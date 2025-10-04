@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Card, Text, IconButton } from 'react-native-paper';
+import { Card, Text, IconButton, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Animatable from 'react-native-animatable';
 
 export default function PersonCard({ person, index, onPress, onDelete }) {
+    const theme = useTheme();
+
     return (
         <Animatable.View
             animation="fadeInUp"
@@ -16,7 +18,7 @@ export default function PersonCard({ person, index, onPress, onDelete }) {
                 <Card.Content style={styles.cardContent}>
                     <View style={styles.personInfo}>
                         <View style={styles.iconContainer}>
-                            <Icon name="account-circle" size={24} color="#FFFFFF" />
+                            <Icon name="account-circle" size={24} color={theme.colors.text} />
                         </View>
                         <Text variant="titleMedium" style={styles.personName}>
                             {person.name}
@@ -24,7 +26,7 @@ export default function PersonCard({ person, index, onPress, onDelete }) {
                     </View>
                     <IconButton
                         icon="trash-can-outline"
-                        iconColor="#666666"
+                        iconColor={theme.colors.error}
                         size={20}
                         onPress={(e) => {
                             e.stopPropagation();

@@ -32,6 +32,10 @@ const theme = {
     outlineVariant: '#2A2A2A', // Even subtler borders
     inverseSurface: '#FFFFFF', // White for special elements
     inverseOnSurface: '#000000', // Black text on white
+    error: '#CF6679',          // Soft red for errors
+    success: '#03daa1ff',        // Green for success
+    warning: '#FFB300',        // Amber for warnings
+    info: '#2196F3',           // Blue for informational text
     elevation: {
       level0: '#000000',
       level1: '#1A1A1A',

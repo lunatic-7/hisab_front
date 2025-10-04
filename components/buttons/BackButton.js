@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         borderRadius: 12,
         borderWidth: 1,
+        width: '40%',
     },
     backButtonText: {
         marginLeft: 8,

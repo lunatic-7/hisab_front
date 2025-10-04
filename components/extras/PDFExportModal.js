@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import { Modal, Card, Text, Divider, Button } from 'react-native-paper';
+import { Modal, Card, Text, Divider, Button, useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { format, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { api } from '../utils/api';
+import { api } from '../../utils/api';
 
 export default function PDFExportModal({ visible, onDismiss, hisabs, personName }) {
+    const theme = useTheme();
     const [startDate, setStartDate] = useState(startOfDay(new Date(new Date().setMonth(new Date().getMonth() - 1))));
     const [endDate, setEndDate] = useState(endOfDay(new Date()));
     const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -19,12 +20,11 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
         try {
             setPdfLoading(true);
 
-            // Filter hisabs based on date range with timezone-safe comparison
             const filteredHisabs = hisabs.filter(hisab => {
                 const hisabDate = parseISO(hisab.date);
                 return isWithinInterval(hisabDate, {
                     start: startOfDay(startDate),
-                    end: endOfDay(endDate)
+                    end: endOfDay(endDate),
                 });
             });
 
@@ -34,16 +34,14 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
                 return;
             }
 
-            // Format dates for the API (use local date strings)
             const formattedStartDate = format(startDate, 'yyyy-MM-dd');
             const formattedEndDate = format(endDate, 'yyyy-MM-dd');
 
-            // Call the API to generate PDF
             const response = await api.post('/generate_hisab_pdf/', {
                 hisabs: filteredHisabs,
                 startDate: formattedStartDate,
                 endDate: formattedEndDate,
-                personName
+                personName,
             }, { responseType: 'blob' });
 
             const fileName = `Hisab_Report_${personName}_${formattedStartDate}_${formattedEndDate}.pdf`;
@@ -74,57 +72,57 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
 
     const onStartDateChange = (event, selectedDate) => {
         setShowStartDatePicker(false);
-        if (selectedDate) {
-            setStartDate(startOfDay(selectedDate)); // Normalize to start of day
-        }
+        if (selectedDate) setStartDate(startOfDay(selectedDate));
     };
 
     const onEndDateChange = (event, selectedDate) => {
         setShowEndDatePicker(false);
-        if (selectedDate) {
-            setEndDate(endOfDay(selectedDate)); // Normalize to end of day
-        }
+        if (selectedDate) setEndDate(endOfDay(selectedDate));
     };
 
     return (
         <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
-            <Card style={styles.modalCard}>
+            <Card style={[styles.modalCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
                 <Card.Content style={styles.cardContent}>
                     <View style={styles.header}>
-                        <View style={styles.iconBadge}>
-                            <Icon name="file-pdf-box" size={24} color="#FFFFFF" />
+                        <View style={[styles.iconBadge, { backgroundColor: theme.colors.surfaceVariant }]}>
+                            <Icon name="file-pdf-box" size={24} color={theme.colors.primary} />
                         </View>
-                        <Text style={styles.modalTitle}>Export as PDF</Text>
+                        <Text style={[styles.modalTitle, { color: theme.colors.text }]}>
+                            Export as PDF
+                        </Text>
                     </View>
-                    <Divider style={styles.modalDivider} />
 
-                    <Text style={styles.modalSubtitle}>Select Date Range</Text>
+                    <Divider style={[styles.modalDivider, { backgroundColor: theme.colors.outline }]} />
+                    <Text style={[styles.modalSubtitle, { color: theme.colors.onSurfaceVariant }]}>
+                        Select Date Range
+                    </Text>
 
                     <View style={styles.datePickerContainer}>
-                        <Text style={styles.datePickerLabel}>From</Text>
+                        <Text style={[styles.datePickerLabel, { color: theme.colors.onSurfaceVariant }]}>From</Text>
                         <TouchableOpacity
-                            style={styles.dateInput}
+                            style={[styles.dateInput, { backgroundColor: theme.colors.background, borderColor: theme.colors.outline }]}
                             onPress={() => setShowStartDatePicker(true)}
                             activeOpacity={0.7}
                         >
-                            <Text style={styles.dateInputText}>
+                            <Text style={[styles.dateInputText, { color: theme.colors.text }]}>
                                 {format(startDate, 'dd MMM yyyy')}
                             </Text>
-                            <Icon name="calendar" size={18} color="#FFFFFF" />
+                            <Icon name="calendar" size={18} color={theme.colors.onSurfaceVariant} />
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.datePickerContainer}>
-                        <Text style={styles.datePickerLabel}>To</Text>
+                        <Text style={[styles.datePickerLabel, { color: theme.colors.onSurfaceVariant }]}>To</Text>
                         <TouchableOpacity
-                            style={styles.dateInput}
+                            style={[styles.dateInput, { backgroundColor: theme.colors.background, borderColor: theme.colors.outline }]}
                             onPress={() => setShowEndDatePicker(true)}
                             activeOpacity={0.7}
                         >
-                            <Text style={styles.dateInputText}>
+                            <Text style={[styles.dateInputText, { color: theme.colors.text }]}>
                                 {format(endDate, 'dd MMM yyyy')}
                             </Text>
-                            <Icon name="calendar" size={18} color="#FFFFFF" />
+                            <Icon name="calendar" size={18} color={theme.colors.onSurfaceVariant} />
                         </TouchableOpacity>
                     </View>
 
@@ -149,25 +147,24 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
                         />
                     )}
                 </Card.Content>
+
                 <Card.Actions style={styles.modalActions}>
                     <Button
                         mode="outlined"
                         onPress={onDismiss}
                         style={styles.cancelButton}
-                        labelStyle={styles.cancelButtonLabel}
-                        textColor="#AAAAAA"
+                        labelStyle={[styles.cancelButtonLabel, { color: theme.colors.onSurfaceVariant }]}
+                        textColor={theme.colors.onSurfaceVariant}
                     >
                         Cancel
                     </Button>
                     <Button
                         mode="contained"
                         onPress={generatePDF}
-                        style={styles.generateButton}
+                        style={[styles.generateButton, { backgroundColor: theme.colors.primary, borderColor: theme.colors.outline, borderWidth: 1 }]}
                         labelStyle={styles.generateButtonLabel}
                         loading={pdfLoading}
                         disabled={pdfLoading}
-                        buttonColor="#FFFFFF"
-                        textColor="#000000"
                     >
                         {pdfLoading ? 'Generating...' : 'Generate PDF'}
                     </Button>
@@ -183,10 +180,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalCard: {
-        backgroundColor: '#1A1A1A',
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#2A2A2A',
     },
     cardContent: {
         paddingVertical: 20,
@@ -201,24 +196,20 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 12,
-        backgroundColor: '#2A2A2A',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 16,
     },
     modalTitle: {
-        color: '#FFFFFF',
         fontSize: 20,
         fontWeight: '600',
         letterSpacing: 0.3,
     },
     modalDivider: {
-        backgroundColor: '#2A2A2A',
         marginBottom: 20,
         height: 1,
     },
     modalSubtitle: {
-        color: '#AAAAAA',
         fontSize: 15,
         marginBottom: 20,
         fontWeight: '500',
@@ -229,7 +220,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     datePickerLabel: {
-        color: '#AAAAAA',
         width: 60,
         fontSize: 15,
         fontWeight: '500',
@@ -239,14 +229,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#000000',
         borderRadius: 12,
         padding: 14,
         borderWidth: 1,
-        borderColor: '#2A2A2A',
     },
     dateInputText: {
-        color: '#FFFFFF',
         fontSize: 15,
         fontWeight: '500',
         letterSpacing: 0.2,
@@ -257,22 +244,21 @@ const styles = StyleSheet.create({
         paddingTop: 8,
     },
     cancelButton: {
-        borderColor: '#2A2A2A',
-        borderWidth: 1,
         borderRadius: 12,
         paddingHorizontal: 8,
     },
     cancelButtonLabel: {
-        color: '#AAAAAA',
         fontWeight: '600',
         letterSpacing: 0.3,
     },
     generateButton: {
+        color: '#000',
         borderRadius: 12,
         paddingHorizontal: 8,
     },
     generateButtonLabel: {
         fontWeight: '600',
         letterSpacing: 0.3,
+        color: '#000',
     },
 });

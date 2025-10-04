@@ -14,7 +14,8 @@ export default function SubmitButton({ loading, disabled, editingMode, onPress }
             style={[
                 styles.submitButton,
                 {
-                    backgroundColor: disabled ? theme.colors.outline : theme.colors.background,
+                    backgroundColor: disabled ? theme.colors.outline : theme.colors.primary,
+                    borderColor: theme.colors.outline,
                 },
             ]}
             labelStyle={[
@@ -41,6 +42,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         elevation: 0,
         shadowOpacity: 0,
+        borderWidth: 1,
     },
     buttonContent: {
         paddingVertical: 8,

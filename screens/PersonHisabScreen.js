@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, FlatList, Alert, StyleSheet } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { api } from '../utils/api';
-import PersonCard from '../components/PersonCard';
-import AddPersonDialog from '../components/AddPersonDialog';
-import AddFAB from '../components/AddFAB';
-import EmptyState from '../components/EmptyState';
-import LoadingSpinner from '../components/LoadingSpinner';
+import PersonCard from '../components/cards/PersonCard';
+import AddPersonDialog from '../components/extras/AddPersonDialog';
+import AddFAB from '../components/extras/AddFAB';
+import EmptyState from '../components/extras/EmptyState';
+import LoadingSpinner from '../components/extras/LoadingSpinner';
 
 export default function PersonHisabScreen({ navigation }) {
     const [persons, setPersons] = useState([]);

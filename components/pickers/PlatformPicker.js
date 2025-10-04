@@ -9,9 +9,6 @@ export default function PlatformPicker({ selectedValue, onValueChange }) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.labelContainer}>
-                <Text style={[styles.label, { color: theme.colors.text }]}>Platform</Text>
-            </View>
             <View style={[styles.pickerContainer, { borderColor: theme.colors.outline, backgroundColor: theme.colors.surface }]}>
                 <Picker
                     selectedValue={selectedValue || 'zomato'}
