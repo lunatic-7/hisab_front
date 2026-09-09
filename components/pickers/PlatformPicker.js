@@ -22,6 +22,8 @@ export default function PlatformPicker({ selectedValue, onValueChange }) {
                     <Picker.Item label="Flipkart" value="flipkart" color={theme.colors.text} />
                     <Picker.Item label="Blinkit" value="blinkit" color={theme.colors.text} />
                     <Picker.Item label="Zepto" value="zepto" color={theme.colors.text} />
+                    <Picker.Item label="Online Card" value="online_card" color={theme.colors.text} />
+                    <Picker.Item label="Banking" value="banking" color={theme.colors.text} />
                     <Picker.Item label="Others" value="others" color={theme.colors.text} />
                 </Picker>
             </View>
