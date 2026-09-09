@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Card, Text, Divider, useTheme } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import * as Animatable from 'react-native-animatable';
 
 export default function MonthCard({ month, onPress }) {
@@ -45,7 +45,7 @@ export default function MonthCard({ month, onPress }) {
                             <View style={styles.statItem}>
                                 <Icon name="receipt" size={16} color={theme.colors.placeholder} />
                                 <Text style={[styles.statText, { color: theme.colors.placeholder }]}>
-                                    {month.count} transactions
+                                    {month.count} hisabs • {month.doneCount || 0} done
                                 </Text>
                             </View>
                             <View style={styles.statItem}>

@@ -4,7 +4,14 @@ import { View, StyleSheet } from 'react-native';
 import { Card, Text, IconButton, useTheme } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 
-export default function SummaryCard({ personName, totalAmount, onPDFPress, subtitle = 'Total Amount' }) {
+export default function SummaryCard({
+    personName,
+    totalAmount,
+    totalHisabs = 0,
+    doneHisabs = 0,
+    onPDFPress,
+    subtitle = 'Total Amount'
+}) {
     const theme = useTheme();
 
     return (
@@ -35,6 +42,19 @@ export default function SummaryCard({ personName, totalAmount, onPDFPress, subti
                         <Text style={[styles.totalAmount, { color: theme.colors.text }]}>
                             ₹{totalAmount}
                         </Text>
+                    </View>
+
+                    <View style={styles.statsRow}>
+                        <View style={[styles.statPill, { backgroundColor: theme.colors.surfaceVariant }]}>
+                            <Text style={[styles.statPillText, { color: theme.colors.onSurfaceVariant }]}>
+                                {totalHisabs} hisabs
+                            </Text>
+                        </View>
+                        <View style={[styles.statPill, { backgroundColor: theme.colors.primaryContainer }]}>
+                            <Text style={[styles.statPillText, { color: theme.colors.onPrimaryContainer }]}>
+                                {doneHisabs} done
+                            </Text>
+                        </View>
                     </View>
                 </Card.Content>
             </Card>
@@ -81,5 +101,20 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: '700',
         letterSpacing: -0.5,
+    },
+    statsRow: {
+        flexDirection: 'row',
+        marginTop: 12,
+        gap: 8,
+    },
+    statPill: {
+        borderRadius: 999,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+    },
+    statPillText: {
+        fontSize: 12,
+        fontWeight: '600',
+        letterSpacing: 0.2,
     },
 });

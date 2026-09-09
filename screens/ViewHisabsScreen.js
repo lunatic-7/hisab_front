@@ -22,6 +22,11 @@ export default function ViewHisabsScreen({ route, navigation }) {
     const [selectedMonth, setSelectedMonth] = useState(null);
     const [pdfModalVisible, setPdfModalVisible] = useState(false);
 
+    const totalHisabsCount = hisabs.length;
+    const totalDoneHisabsCount = hisabs.filter((item) => item.is_done).length;
+    const monthHisabsCount = filteredHisabs.length;
+    const monthDoneHisabsCount = filteredHisabs.filter((item) => item.is_done).length;
+
     const fetchHisabs = async () => {
         try {
             setLoading(true);
@@ -77,11 +82,13 @@ export default function ViewHisabsScreen({ route, navigation }) {
                     startDate: startOfMonth(date),
                     endDate: endOfMonth(date),
                     count: 0,
+                    doneCount: 0,
                     total: 0
                 };
             }
 
             monthMap[monthKey].count++;
+            if (hisab.is_done) monthMap[monthKey].doneCount++;
             monthMap[monthKey].total += parseFloat(hisab.price);
         });
 
@@ -117,6 +124,25 @@ export default function ViewHisabsScreen({ route, navigation }) {
         );
     };
 
+    const toggleHisabDone = async (hisab) => {
+        const nextValue = !hisab.is_done;
+
+        try {
+            setHisabs((prev) => prev.map((item) => (
+                item.id === hisab.id ? { ...item, is_done: nextValue } : item
+            )));
+            setFilteredHisabs((prev) => prev.map((item) => (
+                item.id === hisab.id ? { ...item, is_done: nextValue } : item
+            )));
+
+            await api.put(`/hisabs/${hisab.id}/`, { ...hisab, is_done: nextValue });
+        } catch (error) {
+            console.error('Failed to update hisab status:', error);
+            Alert.alert('❌ Error', 'Failed to update done status. Please try again.');
+            await fetchHisabs();
+        }
+    };
+
     const monthlySummary = getMonthlySummary();
 
     return (
@@ -124,6 +150,8 @@ export default function ViewHisabsScreen({ route, navigation }) {
             <SummaryCard
                 personName={personName}
                 totalAmount={viewMode === 'months' ? totalAmount : monthlyTotalAmount}
+                totalHisabs={viewMode === 'months' ? totalHisabsCount : monthHisabsCount}
+                doneHisabs={viewMode === 'months' ? totalDoneHisabsCount : monthDoneHisabsCount}
                 onPDFPress={() => setPdfModalVisible(true)}
                 subtitle={viewMode === 'transactions' ? selectedMonth?.monthName : 'Total Amount'}
             />
@@ -165,6 +193,7 @@ export default function ViewHisabsScreen({ route, navigation }) {
                                 personName,
                                 mode: 'edit'
                             })}
+                            onToggleDone={() => toggleHisabDone(item)}
                             onDelete={() => deleteHisab(item.id)}
                         />
                     )}

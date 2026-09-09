@@ -9,6 +9,7 @@ import PersonPicker from '../components/pickers/PersonPicker';
 import ItemInput from '../components/inputs/ItemInput';
 import PriceInput from '../components/inputs/PriceInput';
 import DescriptionInput from '../components/inputs/DescriptionInput';
+import HisabDoneSwitch from '../components/extras/HisabDoneSwitch';
 import OnlinePurchaseSwitch from '../components/extras/OnlinePurchaseSwitch';
 import PlatformPicker from '../components/pickers/PlatformPicker';
 import DatePicker from '../components/pickers/DatePicker';
@@ -28,6 +29,7 @@ export default function AddHisabScreen({ route, navigation }) {
     item: '',
     price: '',
     description: '',
+    is_done: false,
     if_online: false,
     platform: '',
     date: new Date().toISOString().split('T')[0],
@@ -60,6 +62,7 @@ export default function AddHisabScreen({ route, navigation }) {
     if (editingMode && editingHisab) {
       setHisab({
         ...editingHisab,
+        is_done: editingHisab.is_done ?? false,
         date: editingHisab.date,
       });
     }
@@ -144,6 +147,11 @@ export default function AddHisabScreen({ route, navigation }) {
                 <DescriptionInput
                   value={hisab.description}
                   onChangeText={(value) => updateHisab('description', value)}
+                />
+
+                <HisabDoneSwitch
+                  value={!!hisab.is_done}
+                  onValueChange={(value) => updateHisab('is_done', value)}
                 />
 
                 <View style={styles.horizontalContainer}>

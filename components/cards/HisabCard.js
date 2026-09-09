@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Card, Text, IconButton, useTheme } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { format, parseISO } from 'date-fns';
 import * as Animatable from 'react-native-animatable';
 
-export default function HisabCard({ hisab, index, onPress, onDelete }) {
+export default function HisabCard({ hisab, index, onPress, onDelete, onToggleDone }) {
     const theme = useTheme();
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+    const shouldShowDescriptionToggle = (hisab.description || '').trim().length > 60;
 
     return (
         <Animatable.View animation="fadeInUp" duration={600} delay={index * 80} useNativeDriver>
@@ -15,8 +17,9 @@ export default function HisabCard({ hisab, index, onPress, onDelete }) {
                     style={[
                         styles.card,
                         {
-                            backgroundColor: theme.colors.surface,
-                            borderColor: theme.colors.outline,
+                            backgroundColor: hisab.is_done ? theme.colors.surfaceVariant : theme.colors.surface,
+                            borderColor: hisab.is_done ? theme.colors.primary : theme.colors.outline,
+                            opacity: hisab.is_done ? 0.92 : 1,
                         },
                     ]}
                 >
@@ -32,26 +35,95 @@ export default function HisabCard({ hisab, index, onPress, onDelete }) {
                                     <Icon
                                         name={hisab.if_online ? "web" : "cash"}
                                         size={14}
-                                        color={hisab.if_online ? theme.colors.warning : theme.colors.success}
+                                        color={hisab.is_done
+                                            ? theme.colors.primary
+                                            : hisab.if_online
+                                                ? theme.colors.warning
+                                                : theme.colors.success}
                                     />
                                 </View>
-                                <Text style={[styles.itemName, { color: theme.colors.text }]} numberOfLines={1}>
+                                <Text
+                                    style={[
+                                        styles.itemName,
+                                        {
+                                            color: hisab.is_done ? theme.colors.placeholder : theme.colors.text,
+                                            textDecorationLine: hisab.is_done ? 'line-through' : 'none',
+                                        },
+                                    ]}
+                                    numberOfLines={1}
+                                >
                                     {hisab.item}
                                 </Text>
                             </View>
-                            <Text style={[styles.itemPrice, { color: theme.colors.text }]}>
+                            <Text
+                                style={[
+                                    styles.itemPrice,
+                                    { color: hisab.is_done ? theme.colors.placeholder : theme.colors.text },
+                                ]}
+                            >
                                 ₹{parseFloat(hisab.price)}
                             </Text>
                         </View>
 
                         {hisab.description && (
-                            <Text style={[styles.description, { color: theme.colors.onSurfaceVariant }]} numberOfLines={2}>
-                                {hisab.description}
-                            </Text>
+                            <>
+                                <Text
+                                    style={[styles.description, { color: theme.colors.onSurfaceVariant }]}
+                                    numberOfLines={isDescriptionExpanded ? undefined : 2}
+                                >
+                                    {hisab.description}
+                                </Text>
+
+                                {shouldShowDescriptionToggle && (
+                                    <TouchableOpacity
+                                        onPress={(event) => {
+                                            event.stopPropagation();
+                                            setIsDescriptionExpanded((prev) => !prev);
+                                        }}
+                                        activeOpacity={0.7}
+                                        style={styles.readMoreButton}
+                                    >
+                                        <Text style={[styles.readMoreText, { color: theme.colors.primary }]}>
+                                            {isDescriptionExpanded ? 'Read less' : 'Read more'}
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
+                            </>
                         )}
 
                         <View style={styles.bottomRow}>
                             <View style={styles.metaContainer}>
+                                <TouchableOpacity
+                                    onPress={(event) => {
+                                        event.stopPropagation();
+                                        if (onToggleDone) onToggleDone();
+                                    }}
+                                    style={styles.doneToggleButton}
+                                    activeOpacity={0.7}
+                                >
+                                    <Icon
+                                        name={hisab.is_done ? 'check-circle' : 'check-circle-outline'}
+                                        size={16}
+                                        color={hisab.is_done ? theme.colors.primary : theme.colors.placeholder}
+                                    />
+                                    <Text
+                                        style={[
+                                            styles.doneToggleText,
+                                            {
+                                                color: hisab.is_done ? theme.colors.primary : theme.colors.placeholder,
+                                            },
+                                        ]}
+                                    >
+                                        {hisab.is_done ? 'Done' : 'Mark done'}
+                                    </Text>
+                                </TouchableOpacity>
+
+                                <View
+                                    style={[
+                                        styles.dotSeparator,
+                                        { backgroundColor: hisab.is_done ? theme.colors.primary : theme.colors.outline },
+                                    ]}
+                                />
                                 <Icon name="calendar" size={12} color={theme.colors.placeholder} />
                                 <Text style={[styles.metaText, { color: theme.colors.placeholder }]}>
                                     {format(parseISO(hisab.date), 'dd MMM')}
@@ -126,9 +198,18 @@ const styles = StyleSheet.create({
     },
     description: {
         fontSize: 14,
-        marginBottom: 12,
+        marginBottom: 4,
         lineHeight: 20,
         marginLeft: 38,
+    },
+    readMoreButton: {
+        marginLeft: 38,
+        marginBottom: 12,
+        alignSelf: 'flex-start',
+    },
+    readMoreText: {
+        fontSize: 12,
+        fontWeight: '600',
     },
     bottomRow: {
         flexDirection: 'row',
@@ -139,6 +220,16 @@ const styles = StyleSheet.create({
     metaContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        flexWrap: 'wrap',
+    },
+    doneToggleButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    doneToggleText: {
+        fontSize: 12,
+        marginLeft: 4,
+        fontWeight: '600',
     },
     metaText: {
         fontSize: 12,

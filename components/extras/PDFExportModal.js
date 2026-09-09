@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { Modal, Card, Text, Divider, Button, useTheme } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { format, parseISO, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { api } from '../../utils/api';
 
@@ -71,12 +71,10 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
     };
 
     const onStartDateChange = (event, selectedDate) => {
-        setShowStartDatePicker(false);
         if (selectedDate) setStartDate(startOfDay(selectedDate));
     };
 
     const onEndDateChange = (event, selectedDate) => {
-        setShowEndDatePicker(false);
         if (selectedDate) setEndDate(endOfDay(selectedDate));
     };
 
@@ -131,7 +129,11 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
                             value={startDate}
                             mode="date"
                             display="default"
-                            onChange={onStartDateChange}
+                            onValueChange={(event, selectedDate) => {
+                                onStartDateChange(event, selectedDate);
+                                setShowStartDatePicker(false);
+                            }}
+                            onDismiss={() => setShowStartDatePicker(false)}
                             maximumDate={endDate}
                         />
                     )}
@@ -141,7 +143,11 @@ export default function PDFExportModal({ visible, onDismiss, hisabs, personName 
                             value={endDate}
                             mode="date"
                             display="default"
-                            onChange={onEndDateChange}
+                            onValueChange={(event, selectedDate) => {
+                                onEndDateChange(event, selectedDate);
+                                setShowEndDatePicker(false);
+                            }}
+                            onDismiss={() => setShowEndDatePicker(false)}
                             minimumDate={startDate}
                             maximumDate={new Date()}
                         />

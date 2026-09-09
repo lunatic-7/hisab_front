@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, Platform, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { format } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -33,12 +33,15 @@ export default function DatePicker({ date, onDateChange }) {
                     value={new Date(date)}
                     mode="date"
                     display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                    onChange={(event, selectedDate) => {
-                        setShowDatePicker(false);
+                    onValueChange={(event, selectedDate) => {
                         if (selectedDate) {
                             onDateChange(selectedDate.toISOString().split('T')[0]);
                         }
+                        if (Platform.OS === 'android') {
+                            setShowDatePicker(false);
+                        }
                     }}
+                    onDismiss={() => setShowDatePicker(false)}
                     maximumDate={new Date()}
                     themeVariant="dark"
                 />
