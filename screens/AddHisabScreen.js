@@ -82,8 +82,6 @@ export default function AddHisabScreen({ route, navigation }) {
         await api.post('/hisabs/', hisab);
       }
 
-      if (route.params?.onGoBack) route.params.onGoBack();
-
       navigation.goBack();
     } catch (error) {
       console.error('Failed to save hisab:', error);

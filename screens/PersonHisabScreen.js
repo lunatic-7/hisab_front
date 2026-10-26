@@ -62,8 +62,22 @@ export default function PersonHisabScreen({ navigation }) {
                     text: 'Chle na',
                     style: 'destructive',
                     onPress: async () => {
-                        await api.delete(`/persons/${id}/delete/`);
-                        await fetchPersons();
+                        try {
+                            try {
+                                await api.delete(`/persons/${id}/delete/`);
+                            } catch (error) {
+                                if (error?.response?.status === 404) {
+                                    await api.delete(`/persons/${id}/`);
+                                } else {
+                                    throw error;
+                                }
+                            }
+
+                            await fetchPersons();
+                        } catch (error) {
+                            console.error('Failed to delete person:', error);
+                            Alert.alert('❌ Error', 'Failed to delete person. Please try again.');
+                        }
                     }
                 }
             ]

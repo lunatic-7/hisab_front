@@ -220,7 +220,6 @@ export default function ViewHisabsScreen({ route, navigation }) {
                 onPress={() => navigation.navigate('AddHisab', {
                     personId,
                     personName,
-                    onGoBack: fetchHisabs
                 })}
             />
         </View>
